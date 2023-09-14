@@ -1,11 +1,11 @@
-import Part from './Part.jsx'
+import Parts from './Parts.jsx'
+import Total from './Total.jsx'
 
 const Content = ({ parts }) => {
     return (
         <div>
-            {parts.map(part => 
-                <Part key={part.id}  name={part.name} exercises={part.exercises} />
-            )}
+            <Parts parts={parts} />
+            <Total parts={parts} />
         </div>
     )
 }
