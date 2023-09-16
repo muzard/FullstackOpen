@@ -11,20 +11,19 @@ const App = () => {
 
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [showAll, setShowAll] = useState(true);
+  const [filter, setFilter] = useState("");
 
   const checkName = (name) => {
     return persons.some((person) => person.name === name);
   };
 
-  const checkNumber = (number) => {
-    return persons.some((person) => person.number === number);
-  };
-
   const addPerson = (event) => {
     event.preventDefault();
 
-    if (checkName(newName) && !checkNumber(newNumber)) {
+    if (checkName(newName)) {
       setNewName("");
+      setNewNumber("");
       alert(`${newName} is already added to phonebook`);
     } else {
       const person = {
@@ -46,10 +45,31 @@ const App = () => {
     setNewNumber(event.target.value);
   };
 
+  const personsToShow = showAll
+    ? persons
+    : persons.filter((person) => {
+        const lcName = person.name.toLowerCase();
+        return lcName.includes(filter.toLowerCase());
+      });
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+    if (filter === "") {
+      setShowAll(true);
+    } else {
+      setShowAll(false);
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+        filter shown with
+        <input type="text" value={filter} onChange={handleFilterChange} />
+      </div>
 
+      <h3>add a new</h3>
       <form onSubmit={addPerson}>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
@@ -62,7 +82,7 @@ const App = () => {
         </div>
       </form>
 
-      <Numbers persons={persons} />
+      <Numbers persons={personsToShow} />
     </div>
   );
 };
