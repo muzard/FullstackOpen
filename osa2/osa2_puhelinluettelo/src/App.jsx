@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Numbers from "./components/Numbers.jsx";
 import Filter from "./components/Filter.jsx";
+import Form from "./components/Form.jsx";
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -73,17 +74,13 @@ const App = () => {
       <Filter value={filter} handler={handleFilterChange} />
 
       <h3>add a new</h3>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Form
+        addPerson={addPerson}
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+        newName={newName}
+        newNumber={newNumber}
+      />
 
       <Numbers persons={personsToShow} />
     </div>
