@@ -30,12 +30,14 @@ const App = () => {
         number: newNumber,
       };
 
-      const newPersons = persons.concat(person);
-      setPersons(newPersons);
-      filterPersons(filter, newPersons);
+      axios.post("http://localhost:3001/persons", person).then((response) => {
+        const newPersons = persons.concat(response.data);
+        setPersons(newPersons);
+        filterPersons(filter, newPersons);
 
-      setNewName("");
-      setNewNumber("");
+        setNewName("");
+        setNewNumber("");
+      });
     }
   };
 
