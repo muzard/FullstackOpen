@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 
 import Numbers from "./components/Numbers.jsx";
 import Filter from "./components/Filter.jsx";
 import Form from "./components/Form.jsx";
+import numberService from "./services/persons.js";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -30,8 +30,8 @@ const App = () => {
         number: newNumber,
       };
 
-      axios.post("http://localhost:3001/persons", person).then((response) => {
-        const newPersons = persons.concat(response.data);
+      numberService.create(person).then((data) => {
+        const newPersons = persons.concat(data);
         setPersons(newPersons);
         filterPersons(filter, newPersons);
 
@@ -47,6 +47,23 @@ const App = () => {
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value);
+  };
+
+  const deletePerson = (id) => {
+    const name = persons.find((person) => person.id == id).name;
+
+    if (!window.confirm(`delete ${name}?`)) {
+      return null;
+    }
+
+    numberService.deleteFromServer(id);
+
+    const newPersons = persons.filter((person) => {
+      return person.id != id;
+    });
+
+    setPersons(newPersons);
+    filterPersons(filter, newPersons);
   };
 
   const filterPersons = (filter, localPersons) => {
@@ -68,8 +85,8 @@ const App = () => {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      const localPersons = response.data;
+    numberService.getAll().then((data) => {
+      const localPersons = data;
       setPersons(localPersons);
       filterPersons(filter, localPersons);
     });
@@ -89,7 +106,7 @@ const App = () => {
         newNumber={newNumber}
       />
 
-      <Numbers persons={personsToShow} />
+      <Numbers persons={personsToShow} deletePerson={deletePerson} />
     </div>
   );
 };
