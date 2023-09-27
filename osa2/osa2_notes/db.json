@@ -27,12 +27,12 @@
     },
     {
       "content": "third test",
-      "important": true,
+      "important": false,
       "id": 6
     },
     {
       "content": "fourth test",
-      "important": true,
+      "important": false,
       "id": 7
     }
   ]
