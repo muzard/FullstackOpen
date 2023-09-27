@@ -21,6 +21,14 @@ const App = () => {
     event.preventDefault();
 
     if (checkName(newName)) {
+      if (
+        !window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        return null;
+      }
+
       const person = persons.find((person) => person.name == newName);
       const newPerson = { ...person, number: newNumber };
       numberService.update(person.id, newPerson);
