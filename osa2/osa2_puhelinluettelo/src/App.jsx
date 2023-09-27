@@ -21,9 +21,19 @@ const App = () => {
     event.preventDefault();
 
     if (checkName(newName)) {
+      const person = persons.find((person) => person.name == newName);
+      const newPerson = { ...person, number: newNumber };
+      numberService.update(person.id, newPerson);
+
+      const newPersons = persons.filter((peep) => {
+        return peep.id != person.id;
+      });
+      const localPersons = newPersons.concat(newPerson);
+      setPersons(localPersons);
+      filterPersons(filter, localPersons);
+
       setNewName("");
       setNewNumber("");
-      alert(`${newName} is already added to phonebook`);
     } else {
       const person = {
         name: newName,
