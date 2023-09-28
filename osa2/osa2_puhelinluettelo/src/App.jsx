@@ -4,6 +4,7 @@ import Numbers from "./components/Numbers.jsx";
 import Filter from "./components/Filter.jsx";
 import Form from "./components/Form.jsx";
 import numberService from "./services/persons.js";
+import "../src/index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,9 +13,14 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
   const [personsToShow, setPersonsToShow] = useState(persons);
+  const [notificationMessage, setNotificationMessage] = useState("");
 
   const checkName = (name) => {
     return persons.some((person) => person.name === name);
+  };
+
+  const Notification = ({ message }) => {
+    return <em className="notification">Added {message}</em>;
   };
 
   const addPerson = (event) => {
@@ -47,6 +53,11 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
+
+      setNotificationMessage(newName);
+      setTimeout(() => {
+        setNotificationMessage("");
+      }, 5000);
 
       numberService.create(person).then((data) => {
         const newPersons = persons.concat(data);
@@ -113,6 +124,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
       <Filter value={filter} handler={handleFilterChange} />
 
       <h3>add a new</h3>
