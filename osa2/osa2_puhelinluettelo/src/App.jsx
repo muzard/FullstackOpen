@@ -28,6 +28,15 @@ const App = () => {
     color: "green",
   };
 
+  const errorStyle = {
+    padding: "6px",
+    fontSize: "28px",
+    margin: "12px 0",
+    border: "2px solid red",
+    backgroundColor: "rgb(226, 226, 226)",
+    color: "red",
+  };
+
   const emptyStyle = {
     height: "0",
     width: "0",
@@ -53,7 +62,21 @@ const App = () => {
 
       const person = persons.find((person) => person.name == newName);
       const newPerson = { ...person, number: newNumber };
-      numberService.update(person.id, newPerson);
+      numberService.update(person.id, newPerson).catch((error) => {
+        setNotificationMessage(
+          `Information of ${person.name} was already deleted from server`
+        );
+        setNotificationStyle(errorStyle);
+        setTimeout(() => {
+          setNotificationMessage("");
+          setNotificationStyle(emptyStyle);
+        }, 5000);
+        const newPersons = persons.filter((peep) => {
+          return peep.name != person.name;
+        });
+        filterPersons(filter, newPersons);
+        return null;
+      });
 
       const newPersons = persons.filter((peep) => {
         return peep.id != person.id;
