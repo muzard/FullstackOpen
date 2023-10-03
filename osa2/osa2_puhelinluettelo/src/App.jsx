@@ -19,8 +19,24 @@ const App = () => {
     return persons.some((person) => person.name === name);
   };
 
-  const Notification = ({ message }) => {
-    return <em className="notification">Added {message}</em>;
+  const contentStyle = {
+    padding: "6px",
+    fontSize: "28px",
+    margin: "12px 0",
+    border: "2px solid green",
+    backgroundColor: "rgb(226, 226, 226)",
+    color: "green",
+  };
+
+  const emptyStyle = {
+    height: "0",
+    width: "0",
+  };
+
+  const [notificationStyle, setNotificationStyle] = useState(emptyStyle);
+
+  const Notification = ({ message, style }) => {
+    return <em style={style}>{message}</em>;
   };
 
   const addPerson = (event) => {
@@ -46,6 +62,13 @@ const App = () => {
       setPersons(localPersons);
       filterPersons(filter, localPersons);
 
+      setNotificationMessage(`${newName}'s number was updated to ${newNumber}`);
+      setNotificationStyle(contentStyle);
+      setTimeout(() => {
+        setNotificationMessage("");
+        setNotificationStyle(emptyStyle);
+      }, 5000);
+
       setNewName("");
       setNewNumber("");
     } else {
@@ -54,9 +77,11 @@ const App = () => {
         number: newNumber,
       };
 
-      setNotificationMessage(newName);
+      setNotificationMessage(`${newName} was added to the phonebook`);
+      setNotificationStyle(contentStyle);
       setTimeout(() => {
         setNotificationMessage("");
+        setNotificationStyle(emptyStyle);
       }, 5000);
 
       numberService.create(person).then((data) => {
@@ -91,6 +116,13 @@ const App = () => {
       return person.id != id;
     });
 
+    setNotificationMessage(`${name} was deleted from server`);
+    setNotificationStyle(contentStyle);
+    setTimeout(() => {
+      setNotificationMessage("");
+      setNotificationStyle(emptyStyle);
+    }, 5000);
+
     setPersons(newPersons);
     filterPersons(filter, newPersons);
   };
@@ -122,21 +154,27 @@ const App = () => {
   }, []);
 
   return (
-    <div>
+    <div id="highestFlex">
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
-      <Filter value={filter} handler={handleFilterChange} />
+      <div className="divider" id="highestFlexItem">
+        <Notification message={notificationMessage} style={notificationStyle} />
+        <Filter value={filter} handler={handleFilterChange} />
+      </div>
 
-      <h3>add a new</h3>
-      <Form
-        addPerson={addPerson}
-        handleNameChange={handleNameChange}
-        handleNumberChange={handleNumberChange}
-        newName={newName}
-        newNumber={newNumber}
-      />
+      <div className="divider">
+        <h3>add a new</h3>
+        <Form
+          addPerson={addPerson}
+          handleNameChange={handleNameChange}
+          handleNumberChange={handleNumberChange}
+          newName={newName}
+          newNumber={newNumber}
+        />
+      </div>
 
-      <Numbers persons={personsToShow} deletePerson={deletePerson} />
+      <div className="divider data">
+        <Numbers persons={personsToShow} deletePerson={deletePerson} />
+      </div>
     </div>
   );
 };
