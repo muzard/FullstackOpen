@@ -17,10 +17,10 @@ const Country = ({ country }) => {
           <h3>languages:</h3>
           <ul>
             {Object.values(data.languages).map((language) => {
-              return <li>{language}</li>;
+              return <li key={language}>{language}</li>;
             })}
           </ul>
-          <img src={data.flags.png} alt="" />
+          <img src={data.flags.png} />
         </div>
       </div>
     );

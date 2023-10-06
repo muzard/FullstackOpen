@@ -23,7 +23,7 @@ function App() {
     setNewCountry(newVal);
 
     const filteredCountries = countryArray.filter((country) =>
-      country.toLowerCase().startsWith(newVal.toLowerCase())
+      country.toLowerCase().includes(newVal.toLowerCase())
     );
     setCountriesToShow(filteredCountries);
 
@@ -40,13 +40,22 @@ function App() {
     }
   };
 
+  const showCountry = (country) => {
+    setType(3);
+    setCountriesToShow([country]);
+  };
+
   return (
     <div>
       <SearchBar
         newCountry={newCountry}
         handleCountryChange={handleCountryChange}
       />
-      <Countries type={type} countries={countriesToShow} />
+      <Countries
+        type={type}
+        countries={countriesToShow}
+        showCountry={showCountry}
+      />
     </div>
   );
 }
