@@ -27,7 +27,7 @@ const Countries = ({ type, countries, showCountry }) => {
       </div>
     );
   } else if (type === 3) {
-    return <Country country={countries[0]} />;
+    return <Country countryName={countries[0]} />;
   } else if (type === 4) {
     return <div>No countries found</div>;
   }
