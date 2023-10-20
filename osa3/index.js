@@ -19,6 +19,31 @@ let notes = [
   },
 ];
 
+const generateId = () => {
+  const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
+  return maxId + 1;
+};
+
+app.use(express.json());
+
+app.post("/api/notes", (req, res) => {
+  const body = req.body;
+
+  if (!body.content) {
+    return res.status(400).json({ error: "content missing" });
+  }
+
+  const note = {
+    content: body.content,
+    important: body.important || false,
+    id: generateId(),
+  };
+
+  notes = notes.concat(note);
+
+  res.json(note);
+});
+
 app.get("/", (req, res) => {
   res.send("<h1>Hello world!<h1>");
 });
