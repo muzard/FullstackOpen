@@ -26,6 +26,22 @@ const generateId = () => {
 
 app.use(express.json());
 
+const requestLogger = (request, response, next) => {
+  console.log("Method:", request.method);
+  console.log("Path:", request.path);
+  console.log("Body:", request.body);
+  console.log("---");
+  next();
+};
+
+app.use(requestLogger);
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
+
 app.post("/api/notes", (req, res) => {
   const body = req.body;
 
