@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const url = `mongodb+srv://arttukokki:${encodeURIComponent(
-  "aKz@47_;2a4"
+  "##"
 )}@cluster0.rjhgcn1.mongodb.net/noteApp?retryWrites=true&w=majority`;
 
 mongoose.set("strictQuery", false);
@@ -19,7 +19,15 @@ const note = new Note({
   important: true,
 });
 
+/*
 note.save().then((result) => {
   console.log("note saved!");
+  mongoose.connection.close();
+}); */
+
+Note.find({}).then((result) => {
+  result.forEach((note) => {
+    console.log(note);
+  });
   mongoose.connection.close();
 });
