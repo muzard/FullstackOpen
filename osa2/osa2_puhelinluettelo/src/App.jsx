@@ -100,21 +100,34 @@ const App = () => {
         number: newNumber,
       };
 
-      setNotificationMessage(`${newName} was added to the phonebook`);
-      setNotificationStyle(contentStyle);
-      setTimeout(() => {
-        setNotificationMessage("");
-        setNotificationStyle(emptyStyle);
-      }, 5000);
+      numberService
+        .create(person)
+        .then((data) => {
+          const newPersons = persons.concat(data);
+          setPersons(newPersons);
+          filterPersons(filter, newPersons);
 
-      numberService.create(person).then((data) => {
-        const newPersons = persons.concat(data);
-        setPersons(newPersons);
-        filterPersons(filter, newPersons);
+          setNewName("");
+          setNewNumber("");
 
-        setNewName("");
-        setNewNumber("");
-      });
+          setNotificationMessage(`${newName} was added to the phonebook`);
+          setNotificationStyle(contentStyle);
+          setTimeout(() => {
+            setNotificationMessage("");
+            setNotificationStyle(emptyStyle);
+          }, 5000);
+        })
+        .catch((error) => {
+          setNotificationMessage(error.response.data.error);
+          setNotificationStyle(errorStyle);
+          setTimeout(() => {
+            setNotificationMessage("");
+            setNotificationStyle(emptyStyle);
+          }, 5000);
+
+          setNewName("");
+          setNewNumber("");
+        });
     }
   };
 
