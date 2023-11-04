@@ -70,6 +70,35 @@ describe("api tests", () => {
     expect(returnedBlog.likes).toBeDefined();
     expect(returnedBlog.likes).toBe(0);
   });
+
+  test("when no title or url are given, it's handled as a bad request", async () => {
+    const newBlog = {
+      author: "new author",
+      likes: 13,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(400);
+  });
+
+  test("url not given, is bad request", async () => {
+    const newBlog = {
+      title: "new blog",
+      author: "new author",
+      likes: 13,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(400);
+  });
+
+  test("no title given, is bad request", async () => {
+    const newBlog = {
+      author: "new author",
+      url: "fullstackopen.com",
+      likes: 13,
+    };
+
+    await api.post("/api/blogs").send(newBlog).expect(400);
+  });
 });
 
 afterAll(async () => {

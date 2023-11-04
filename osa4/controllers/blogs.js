@@ -10,6 +10,10 @@ blogsRouter.get("/", async (request, response) => {
 blogsRouter.post("/", async (request, response) => {
   info(request.title);
   const { title, author, url, likes } = request.body;
+  if (!title || !url) {
+    response.status(400).end();
+    return null;
+  }
 
   const blog = new Blog({
     title: title,
