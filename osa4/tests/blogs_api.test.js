@@ -31,6 +31,27 @@ describe("api tests", () => {
 
     expect(testBlog.id).toBeDefined();
   });
+
+  test("valid blogs can be added", async () => {
+    const newBlog = {
+      title: "new blog",
+      author: "new author",
+      url: "fullstackopen.com",
+      likes: 1,
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const response = await api.get("/api/blogs");
+    const titles = response.body.map((r) => r.title);
+
+    expect(response.body).toHaveLength(helper.initialBlogs.length + 1);
+    expect(titles).toContain("new blog");
+  });
 });
 
 afterAll(async () => {
