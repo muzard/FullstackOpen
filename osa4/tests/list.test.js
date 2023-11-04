@@ -252,7 +252,7 @@ describe("most blogs", () => {
   });
 });
 
-describe.only("most likes", () => {
+describe("most likes", () => {
   test("works with full array", () => {
     const result = listHelper.mostLikes(blogs);
     expect(result).toEqual({
