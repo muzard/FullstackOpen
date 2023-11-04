@@ -52,6 +52,24 @@ describe("api tests", () => {
     expect(response.body).toHaveLength(helper.initialBlogs.length + 1);
     expect(titles).toContain("new blog");
   });
+
+  test("when likes are not given, they are automatically 0", async () => {
+    const newBlog = {
+      title: "new blog",
+      author: "new author",
+      url: "fullstackopen.com",
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const returnedBlog = await Blog.findOne({ title: "new blog" });
+    expect(returnedBlog.likes).toBeDefined();
+    expect(returnedBlog.likes).toBe(0);
+  });
 });
 
 afterAll(async () => {
