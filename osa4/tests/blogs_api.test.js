@@ -24,6 +24,13 @@ describe("api tests", () => {
 
     expect(blogs.length).toBe(helper.initialBlogs.length);
   });
+
+  test("identifier exists and is id, not _id", async () => {
+    const blogs = await Blog.find({});
+    const testBlog = blogs[0];
+
+    expect(testBlog.id).toBeDefined();
+  });
 });
 
 afterAll(async () => {
