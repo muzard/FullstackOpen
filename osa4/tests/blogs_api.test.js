@@ -101,6 +101,33 @@ describe("api tests", () => {
   });
 });
 
+describe("tests regarding one id", () => {
+  test("deletion works with valid id", async () => {
+    const blogs = await Blog.find({});
+    const deletedBlog = blogs[0];
+
+    await api.delete(`/api/blogs/${deletedBlog.id}`).expect(204);
+
+    const newBlogs = await Blog.find({});
+    const titles = newBlogs.map((b) => b.title);
+
+    expect(newBlogs).toHaveLength(helper.initialBlogs.length - 1);
+    expect(titles).not.toContainEqual(deletedBlog.title);
+  });
+
+  /* test.only("deletion fails with 404 with valid but unfound id", async () => {
+    const id = await helper.nonExistingId();
+
+    await api.delete(`/api/blogs/${id}`).expect(404);
+  });
+
+  test("deletion fails with 400 with invalid id", async () => {
+    const id = "aaa";
+
+    await api.delete(`/api/blogs/${id}`).expect(400);
+  }); */
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });

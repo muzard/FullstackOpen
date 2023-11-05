@@ -19,11 +19,12 @@ const nonExistingId = async () => {
   const blog = new Blog({
     title: "removable",
     author: "removable",
+    url: "facebook.com",
     likes: 404,
   });
 
   await blog.save();
-  await blog.remove();
+  await Blog.findOneAndRemove({ title: "removable" });
 
   return blog._id.toString();
 };
