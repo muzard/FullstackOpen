@@ -3,6 +3,8 @@ const supertest = require("supertest");
 const helper = require("./helper");
 const app = require("../app");
 const Blog = require("../models/blog");
+const bcrypt = require("bcrypt");
+const User = require("../models/user");
 
 const api = supertest(app);
 
@@ -128,7 +130,7 @@ describe("tests regarding one id", () => {
   }); */
 });
 
-describe.only("updating a blog", () => {
+describe("updating a blog", () => {
   test("works with full new blog", async () => {
     const blog = {
       title: "updated",
@@ -161,6 +163,62 @@ describe.only("updating a blog", () => {
     const updatedBlog = await Blog.findById(oldBlog.id);
 
     expect(updatedBlog.likes).toBe(blog.likes);
+  });
+});
+
+describe.only("when there is initially one user in db", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash("secret", 10);
+    const user = new User({ username: "root", password: passwordHash });
+
+    await user.save();
+  });
+
+  test("creation succeeds with a fresh username", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "muzard",
+      name: "Arttu Kokki",
+      password: "salasana",
+    };
+
+    await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
+    const usernames = usersAtEnd.map((u) => u.username);
+    expect(usernames).toContainEqual(newUser.username);
+  });
+
+  test.skip("creation fails with proper statuscode if username is taken", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "root",
+      name: "Superuser",
+      password: "salainen",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContainEqual(
+      "expected `username` to be unique"
+    );
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
 });
 
