@@ -128,6 +128,42 @@ describe("tests regarding one id", () => {
   }); */
 });
 
+describe.only("updating a blog", () => {
+  test("works with full new blog", async () => {
+    const blog = {
+      title: "updated",
+      author: "updated",
+      url: "updated.com",
+      likes: 123,
+    };
+
+    const oldBlog = await Blog.findOne({});
+
+    await api.put(`/api/blogs/${oldBlog.id}`).send(blog).expect(204);
+
+    const blogs = await Blog.find({});
+    const titles = blogs.map((b) => b.title);
+
+    expect(blogs).toHaveLength(helper.initialBlogs.length);
+    expect(titles).toContainEqual(blog.title);
+    expect(titles).not.toContainEqual(oldBlog.title);
+  });
+
+  test("works with partial blog", async () => {
+    const blog = {
+      likes: 123,
+    };
+
+    const oldBlog = await Blog.findOne({});
+
+    await api.put(`/api/blogs/${oldBlog.id}`).send(blog).expect(204);
+
+    const updatedBlog = await Blog.findById(oldBlog.id);
+
+    expect(updatedBlog.likes).toBe(blog.likes);
+  });
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });
