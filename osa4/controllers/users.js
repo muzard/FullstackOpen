@@ -14,9 +14,12 @@ usersRouter.post("/", async (request, response) => {
     passwordHash,
   });
 
-  const savedUser = await user.save();
-
-  response.status(201).json(savedUser);
+  try {
+    let savedUser = await user.save();
+    response.status(201).json(savedUser);
+  } catch (error) {
+    response.status(400).json({ error: "invalid data" }); // fix this, ie. right code, more descriptive message
+  }
 });
 
 usersRouter.get("/", async (request, response) => {

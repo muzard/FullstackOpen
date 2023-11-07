@@ -180,8 +180,8 @@ describe.only("when there is initially one user in db", () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
-      username: "muzard",
-      name: "Arttu Kokki",
+      username: "muzard23",
+      name: "Arttu Kokki23",
       password: "salasana",
     };
 
@@ -198,11 +198,11 @@ describe.only("when there is initially one user in db", () => {
     expect(usernames).toContainEqual(newUser.username);
   });
 
-  test.skip("creation fails with proper statuscode if username is taken", async () => {
+  test("creation fails with proper statuscode if username is taken", async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
-      username: "root",
+      username: "root23",
       name: "Superuser",
       password: "salainen",
     };
@@ -216,6 +216,47 @@ describe.only("when there is initially one user in db", () => {
     expect(result.body.error).toContainEqual(
       "expected `username` to be unique"
     );
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
+  test("creation fails with proper code and message with invalid username", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "r",
+      name: "Superuser",
+      password: "salainen",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContainEqual(
+      "expected `username` to be unique"
+    );
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
+  test("creation fails with proper code and message with missing password", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "root34",
+      name: "Superuser",
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
