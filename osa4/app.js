@@ -9,6 +9,7 @@ const loginRouter = require("./controllers/login");
 const helper = require("./utils/logger");
 const mongoose = require("mongoose");
 const tokenGetter = require("./utils/token");
+const userGetter = require("./utils/requestUser");
 
 mongoose.set("strictQuery", false);
 
@@ -26,7 +27,7 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use(tokenGetter);
-app.use("/api/blogs", blogsRouter);
+app.use("/api/blogs", userGetter, blogsRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 

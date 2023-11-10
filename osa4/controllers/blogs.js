@@ -14,7 +14,7 @@ blogsRouter.post("/", async (request, response) => {
   if (!decodedToken.id) {
     return response.status(401).json({ error: "invalid token" });
   }
-  const user = await User.findById(decodedToken.id);
+  const user = request.user;
 
   const { title, author, url, likes } = request.body;
   if (!title || !url) {
@@ -45,7 +45,7 @@ blogsRouter.delete("/:id", async (request, response) => {
     return response.status(401).json({ error: "invalid token" });
   }
 
-  const user = await User.findById(decodedToken.id);
+  const user = request.user;
 
   if (blog.user.toString() === decodedToken.id.toString()) {
     await Blog.findByIdAndRemove(blog.id);
