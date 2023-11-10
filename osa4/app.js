@@ -28,7 +28,7 @@ app.use(cors());
 app.use(express.json());
 app.use(tokenGetter);
 app.use("/api/blogs", userGetter, blogsRouter);
-app.use("/api/users", usersRouter);
+app.use("/api/users", userGetter, usersRouter);
 app.use("/api/login", loginRouter);
 
 module.exports = app;

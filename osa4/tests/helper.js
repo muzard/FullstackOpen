@@ -1,18 +1,54 @@
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
+const initialUsers = [
+  {
+    username: "testaaja",
+    name: "testaaja",
+    blogs: [
+      {
+        title: "last blog",
+        author: "same author",
+        url: "fullstackopen.com",
+        likes: 1337,
+        id: "654e4ade17aeb499108d8abd",
+      },
+      {
+        title: "last blog",
+        author: "same author",
+        url: "fullstackopen.com",
+        likes: 1337,
+        id: "654e4b2d300f2b33198051e7",
+      },
+    ],
+    id: "654e49b98e5d68970626b31c",
+  },
+];
+
 const initialBlogs = [
   {
-    title: "first",
-    author: "first author",
-    url: "google.com",
-    likes: 5,
+    title: "last blog",
+    author: "same author",
+    url: "fullstackopen.com",
+    likes: 1337,
+    user: {
+      username: "testaaja",
+      name: "testaaja",
+      id: "654e49b98e5d68970626b31c",
+    },
+    id: "654e4ade17aeb499108d8abd",
   },
   {
-    title: "second",
-    author: "second author",
-    url: "syk.fi",
-    likes: 10,
+    title: "last blog",
+    author: "same author",
+    url: "fullstackopen.com",
+    likes: 1337,
+    user: {
+      username: "testaaja",
+      name: "testaaja",
+      id: "654e49b98e5d68970626b31c",
+    },
+    id: "654e4b2d300f2b33198051e7",
   },
 ];
 
@@ -41,8 +77,9 @@ const usersInDb = async () => {
 };
 
 module.exports = {
-  initialBlogs,
   nonExistingId,
   blogsInDb,
   usersInDb,
+  initialBlogs,
+  initialUsers,
 };

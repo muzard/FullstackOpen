@@ -5,9 +5,12 @@ const User = require("../models/user");
 usersRouter.post("/", async (request, response) => {
   const { username, name, password } = request.body;
 
+  if (!password) {
+    response.status(400).json({ error: "password required" });
+    return null;
+  }
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
-  console.log("hash", passwordHash);
 
   const user = new User({
     username,

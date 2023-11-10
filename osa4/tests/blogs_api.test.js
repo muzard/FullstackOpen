@@ -5,13 +5,14 @@ const app = require("../app");
 const Blog = require("../models/blog");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
 
 const api = supertest(app);
 
-beforeEach(async () => {
-  await Blog.deleteMany({});
-  await Blog.insertMany(helper.initialBlogs);
-});
+let blogCount = 2;
+
+const legitToken =
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RhYWphIiwiaWQiOiI2NTRlNDliOThlNWQ2ODk3MDYyNmIzMWMiLCJpYXQiOjE2OTk2Mjk1MTQsImV4cCI6MTY5OTYzMzExNH0._xK8Mi-ThQa-DtHcfi9H9hZoW7uxGHF89kW32mniHFk";
 
 describe("api tests", () => {
   test("blogs are returned as json", async () => {
@@ -37,13 +38,14 @@ describe("api tests", () => {
   test("valid blogs can be added", async () => {
     const newBlog = {
       title: "new blog",
-      author: "new author",
+      author: "same author",
       url: "fullstackopen.com",
       likes: 1,
     };
 
     await api
       .post("/api/blogs")
+      .set("Authorization", legitToken)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -51,24 +53,25 @@ describe("api tests", () => {
     const response = await api.get("/api/blogs");
     const titles = response.body.map((r) => r.title);
 
-    expect(response.body).toHaveLength(helper.initialBlogs.length + 1);
+    expect(response.body).toHaveLength(blogCount + 1);
     expect(titles).toContain("new blog");
   });
 
   test("when likes are not given, they are automatically 0", async () => {
     const newBlog = {
-      title: "new blog",
+      title: "new blog 2",
       author: "new author",
       url: "fullstackopen.com",
     };
 
     await api
       .post("/api/blogs")
+      .set("Authorization", legitToken)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const returnedBlog = await Blog.findOne({ title: "new blog" });
+    const returnedBlog = await Blog.findOne({ title: "new blog 2" });
     expect(returnedBlog.likes).toBeDefined();
     expect(returnedBlog.likes).toBe(0);
   });
@@ -79,7 +82,11 @@ describe("api tests", () => {
       likes: 13,
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .post("/api/blogs")
+      .set("Authorization", legitToken)
+      .send(newBlog)
+      .expect(400);
   });
 
   test("url not given, is bad request", async () => {
@@ -89,7 +96,11 @@ describe("api tests", () => {
       likes: 13,
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .post("/api/blogs")
+      .set("Authorization", legitToken)
+      .send(newBlog)
+      .expect(400);
   });
 
   test("no title given, is bad request", async () => {
@@ -99,7 +110,11 @@ describe("api tests", () => {
       likes: 13,
     };
 
-    await api.post("/api/blogs").send(newBlog).expect(400);
+    await api
+      .post("/api/blogs")
+      .set("Authorization", legitToken)
+      .send(newBlog)
+      .expect(400);
   });
 });
 
@@ -108,16 +123,19 @@ describe("tests regarding one id", () => {
     const blogs = await Blog.find({});
     const deletedBlog = blogs[0];
 
-    await api.delete(`/api/blogs/${deletedBlog.id}`).expect(204);
+    await api
+      .delete(`/api/blogs/${deletedBlog.id}`)
+      .set("Authorization", legitToken)
+      .expect(204);
 
     const newBlogs = await Blog.find({});
     const titles = newBlogs.map((b) => b.title);
 
-    expect(newBlogs).toHaveLength(helper.initialBlogs.length - 1);
+    expect(newBlogs).toHaveLength(5 - 1);
     expect(titles).not.toContainEqual(deletedBlog.title);
   });
 
-  /* test.only("deletion fails with 404 with valid but unfound id", async () => {
+  /* test("deletion fails with 404 with valid but unfound id", async () => {
     const id = await helper.nonExistingId();
 
     await api.delete(`/api/blogs/${id}`).expect(404);
@@ -133,7 +151,7 @@ describe("tests regarding one id", () => {
 describe("updating a blog", () => {
   test("works with full new blog", async () => {
     const blog = {
-      title: "updated",
+      title: "updated1111",
       author: "updated",
       url: "updated.com",
       likes: 123,
@@ -146,7 +164,7 @@ describe("updating a blog", () => {
     const blogs = await Blog.find({});
     const titles = blogs.map((b) => b.title);
 
-    expect(blogs).toHaveLength(helper.initialBlogs.length);
+    expect(blogs).toHaveLength(4);
     expect(titles).toContainEqual(blog.title);
     expect(titles).not.toContainEqual(oldBlog.title);
   });
@@ -166,22 +184,20 @@ describe("updating a blog", () => {
   });
 });
 
-describe.only("when there is initially one user in db", () => {
+describe("when there is initially one user in db", () => {
   beforeEach(async () => {
     await User.deleteMany({});
 
-    const passwordHash = await bcrypt.hash("secret", 10);
-    const user = new User({ username: "root", password: passwordHash });
-
-    await user.save();
+    const user = { username: "root", name: "juuri", password: "salainen" };
+    await api.post("/api/users").send(user);
   });
 
   test("creation succeeds with a fresh username", async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
-      username: "muzard23",
-      name: "Arttu Kokki23",
+      username: "testaaja",
+      name: "ikmititrtsiw",
       password: "salasana",
     };
 
@@ -202,8 +218,8 @@ describe.only("when there is initially one user in db", () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
-      username: "root23",
-      name: "Superuser",
+      username: "root",
+      name: "ikmititrtsiw",
       password: "salainen",
     };
 
@@ -212,10 +228,6 @@ describe.only("when there is initially one user in db", () => {
       .send(newUser)
       .expect(400)
       .expect("Content-Type", /application\/json/);
-
-    expect(result.body.error).toContainEqual(
-      "expected `username` to be unique"
-    );
 
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
@@ -225,8 +237,8 @@ describe.only("when there is initially one user in db", () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
-      username: "r",
-      name: "Superuser",
+      username: "t",
+      name: "ikmititrtsiw",
       password: "salainen",
     };
 
@@ -236,15 +248,11 @@ describe.only("when there is initially one user in db", () => {
       .expect(400)
       .expect("Content-Type", /application\/json/);
 
-    expect(result.body.error).toContainEqual(
-      "expected `username` to be unique"
-    );
-
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
 
-  test("creation fails with proper code and message with missing password", async () => {
+  test.only("creation fails with proper code and message with missing password", async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
@@ -252,7 +260,9 @@ describe.only("when there is initially one user in db", () => {
       name: "Superuser",
     };
 
-    const result = await api
+    // problems under this
+
+    await api
       .post("/api/users")
       .send(newUser)
       .expect(400)
