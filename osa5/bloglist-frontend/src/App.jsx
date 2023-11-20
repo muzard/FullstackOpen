@@ -1,0 +1,67 @@
+import { useState, useEffect } from 'react'
+import Blog from './components/Blog'
+import blogService from './services/blogs' 
+
+const App = () => {
+  const [blogs, setBlogs] = useState([])
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    blogService.getAll().then(blogs =>
+      setBlogs( blogs )
+    )  
+  }, [])
+
+  const handleLogin = async (event) => {
+    event.preventDefault()
+    const user = await blogService.login({username, password})
+    setUser(user)
+    blogService.setToken(user.token)
+    setUsername("")
+    setPassword("")
+  }
+
+  const userLoggedInContent = () => {
+      return (
+      <div>
+        <div>
+          Logged in as {user.name}
+        </div>
+
+        <h2>blogs</h2>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
+      </div>
+    )
+  }
+
+  const userNotLoggedInContent = () => {
+    return (
+      <div>
+        <h1>log in to application</h1>
+
+        <form onSubmit={handleLogin}>
+          <div>username<input type="text" name="username" value={username} onChange={({ target }) => setUsername(target.value)}/></div>
+          <div>password<input type="text" name="password" value={password} onChange={({ target }) => setPassword(target.value)}/></div>
+          <button type="submit">login</button>
+        </form>
+
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <h1>blogsite</h1>
+
+      {!user && userNotLoggedInContent()}
+      {user && userLoggedInContent()}
+
+    </div>
+  )
+}
+
+export default App
