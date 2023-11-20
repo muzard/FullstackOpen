@@ -15,8 +15,6 @@ blogsRouter.post("/", async (request, response) => {
     return response.status(401).json({ error: "invalid token" });
   }
   const user = request.user;
-  console.log(user, "user");
-
   const { title, author, url, likes } = request.body;
   if (!title || !url) {
     response.status(400).end();

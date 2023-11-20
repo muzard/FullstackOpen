@@ -17,4 +17,19 @@ const login = async credentials => {
   return response.data
 }
 
-export default { getAll, login, setToken }
+const create = async (name, author, url) => {
+  const blog = {
+    title: name,
+    author: author,
+    url: url,
+  }
+
+  const config = {
+    headers: { Authorization: token }
+  }
+
+  const response = await axios.post("http://localhost:3001/api/blogs", blog, config)
+  return response.data
+}
+
+export default { getAll, login, setToken, create }
