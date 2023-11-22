@@ -75,13 +75,18 @@ const App = () => {
 
   const createBlog = async (event) => {
     event.preventDefault();
-    const blog = await blogService.create(title, author, URL);
-    setBlogs(blogs.concat(blog));
+
+    try {
+      const blog = await blogService.create(title, author, URL);
+      setBlogs(blogs.concat(blog));
+      notificationSetter(`${blog.title} added to bloglist`, contentStyle);
+    } catch (exception) {
+      notificationSetter("invalid blog info", errorStyle);
+    }
+
     setTitle("");
     setAuthor("");
     setURL("");
-
-    notificationSetter(`${blog.title} added to bloglist`, contentStyle);
   };
 
   const handleLogin = async (event) => {
