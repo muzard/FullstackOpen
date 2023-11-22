@@ -12,9 +12,6 @@ const App = () => {
   const [author, setAuthor] = useState("");
   const [URL, setURL] = useState("");
 
-  const [notificationMessage, setNotificationMessage] = useState("");
-  const [notificationStyle, setNotificationStyle] = useState("");
-
   const contentStyle = {
     padding: "6px",
     fontSize: "28px",
@@ -38,8 +35,21 @@ const App = () => {
     width: "0",
   };
 
+  const [notificationMessage, setNotificationMessage] = useState("");
+  const [notificationStyle, setNotificationStyle] = useState(emptyStyle);
+
   const Notification = ({ message, style }) => {
     return <em style={style}>{message}</em>;
+  };
+
+  const notificationSetter = (message, style) => {
+    setNotificationMessage(message);
+    setNotificationStyle(style);
+
+    setTimeout(() => {
+      setNotificationMessage("");
+      setNotificationStyle(emptyStyle);
+    }, 5000);
   };
 
   useEffect(() => {
@@ -59,6 +69,8 @@ const App = () => {
     setUser(null);
     blogService.setToken(null);
     window.localStorage.removeItem("loggedBlogappUser");
+
+    notificationSetter("logged out", contentStyle);
   };
 
   const createBlog = async (event) => {
@@ -68,6 +80,8 @@ const App = () => {
     setTitle("");
     setAuthor("");
     setURL("");
+
+    notificationSetter(`${blog.title} added to bloglist`, contentStyle);
   };
 
   const handleLogin = async (event) => {
@@ -81,6 +95,8 @@ const App = () => {
 
     setUsername("");
     setPassword("");
+
+    notificationSetter(`${user.name} logged in`, contentStyle);
   };
 
   const userLoggedInContent = () => {
