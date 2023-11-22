@@ -87,16 +87,20 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    const user = await blogService.login({ username, password });
-    setUser(user);
-    blogService.setToken(user.token);
+    try {
+      const user = await blogService.login({ username, password });
+      setUser(user);
+      blogService.setToken(user.token);
 
-    window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+
+      notificationSetter(`${user.name} logged in`, contentStyle);
+    } catch (exception) {
+      notificationSetter("login failed. wrong login info?", errorStyle);
+    }
 
     setUsername("");
     setPassword("");
-
-    notificationSetter(`${user.name} logged in`, contentStyle);
   };
 
   const userLoggedInContent = () => {
