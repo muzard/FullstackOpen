@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import NewBlog from "./components/NewBlog";
@@ -9,6 +9,8 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+
+  const blogFormRef = useRef();
 
   const contentStyle = {
     padding: "6px",
@@ -72,6 +74,7 @@ const App = () => {
   };
 
   const createBlog = async (blogObject) => {
+    blogFormRef.current.toggleVisibility();
     try {
       const blog = await blogService.create(blogObject);
       setBlogs(blogs.concat(blog));
@@ -112,7 +115,7 @@ const App = () => {
           ))}
         </div>
 
-        <Togglable buttonLabel="new blog">
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
           <NewBlog createBlog={createBlog} />
         </Togglable>
 
