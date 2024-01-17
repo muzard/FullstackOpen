@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
+import NewBlog from "./components/NewBlog";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [URL, setURL] = useState("");
 
   const contentStyle = {
     padding: "6px",
@@ -73,20 +70,14 @@ const App = () => {
     notificationSetter("logged out", contentStyle);
   };
 
-  const createBlog = async (event) => {
-    event.preventDefault();
-
+  const createBlog = async (blogObject) => {
     try {
-      const blog = await blogService.create(title, author, URL);
+      const blog = await blogService.create(blogObject);
       setBlogs(blogs.concat(blog));
       notificationSetter(`${blog.title} added to bloglist`, contentStyle);
     } catch (exception) {
       notificationSetter("invalid blog info", errorStyle);
     }
-
-    setTitle("");
-    setAuthor("");
-    setURL("");
   };
 
   const handleLogin = async (event) => {
@@ -120,42 +111,7 @@ const App = () => {
           ))}
         </div>
 
-        <div>
-          <h2>Create new blog</h2>
-          <form onSubmit={createBlog}>
-            <div>
-              title{" "}
-              <input
-                type="text"
-                name="title"
-                value={title}
-                onChange={({ target }) => setTitle(target.value)}
-              />
-            </div>
-
-            <div>
-              author{" "}
-              <input
-                type="text"
-                name="author"
-                value={author}
-                onChange={({ target }) => setAuthor(target.value)}
-              />
-            </div>
-
-            <div>
-              URL{" "}
-              <input
-                type="text"
-                name="URL"
-                value={URL}
-                onChange={({ target }) => setURL(target.value)}
-              />
-            </div>
-
-            <button type="submit">create</button>
-          </form>
-        </div>
+        <NewBlog createBlog={createBlog} />
 
         <br />
       </div>
