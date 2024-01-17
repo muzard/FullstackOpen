@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import NewBlog from "./components/NewBlog";
+import Togglable from "./components/Togglable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -111,7 +112,9 @@ const App = () => {
           ))}
         </div>
 
-        <NewBlog createBlog={createBlog} />
+        <Togglable buttonLabel="new blog">
+          <NewBlog createBlog={createBlog} />
+        </Togglable>
 
         <br />
       </div>
