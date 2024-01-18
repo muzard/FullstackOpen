@@ -11,6 +11,7 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
+  const blogRef = useRef();
 
   const contentStyle = {
     padding: "6px",
@@ -111,7 +112,7 @@ const App = () => {
         <div>
           <h2>blogs</h2>
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} ref={blogRef} />
           ))}
         </div>
 
