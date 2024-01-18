@@ -78,6 +78,7 @@ const App = () => {
     blogFormRef.current.toggleVisibility();
     try {
       const blog = await blogService.create(blogObject);
+      blog.user = user;
       setBlogs(blogs.concat(blog));
       notificationSetter(`${blog.title} added to bloglist`, contentStyle);
     } catch (exception) {
