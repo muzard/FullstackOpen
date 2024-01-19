@@ -33,4 +33,11 @@ const create = async (blog) => {
   return response.data;
 };
 
-export default { getAll, login, setToken, create };
+const like = async (likes, id) => {
+  const response = await axios.put(`http://localhost:3001/api/blogs/${id}`, {
+    likes: likes,
+  });
+  return response.data;
+};
+
+export default { getAll, login, setToken, create, like };

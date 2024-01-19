@@ -54,7 +54,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService.getAll().then((blogs) => {
+      setBlogs(blogs);
+    });
   }, []);
 
   useEffect(() => {
@@ -86,6 +88,15 @@ const App = () => {
     }
   };
 
+  const likeBlog = async (likedBlog) => {
+    const visibleBlogIndex = blogs.findIndex((blog) => blog.id == likedBlog.id);
+    const updatedBlogs = blogs;
+    updatedBlogs[visibleBlogIndex].likes += 1;
+    setBlogs(updatedBlogs);
+
+    await blogService.like(likedBlog.likes, likedBlog.id);
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault();
 
@@ -113,7 +124,7 @@ const App = () => {
         <div>
           <h2>blogs</h2>
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} ref={blogRef} />
+            <Blog key={blog.id} blog={blog} ref={blogRef} like={likeBlog} />
           ))}
         </div>
 

@@ -3,6 +3,7 @@ import { useState, useImperativeHandle, forwardRef } from "react";
 const Blog = forwardRef((props, ref) => {
   const [visible, setVisible] = useState(false);
   const blog = props.blog;
+  const [likes, setLikes] = useState(blog.likes);
 
   const normalStyle = {
     paddingTop: 10,
@@ -28,6 +29,11 @@ const Blog = forwardRef((props, ref) => {
     };
   });
 
+  const like = () => {
+    props.like(blog);
+    setLikes(likes + 1);
+  };
+
   return (
     <div>
       <div style={hideWhenBig}>
@@ -42,7 +48,7 @@ const Blog = forwardRef((props, ref) => {
         </div>
         <div>{blog.url}</div>
         <div>
-          {blog.likes} <button>like</button>
+          {likes} <button onClick={like}>like</button>
         </div>
         <div>{blog.user.name}</div>
       </div>
