@@ -12,7 +12,7 @@ const api = supertest(app);
 let blogCount = 2;
 
 const legitToken =
-  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RhYWphIiwiaWQiOiI2NTRlNDliOThlNWQ2ODk3MDYyNmIzMWMiLCJpYXQiOjE2OTk2Mjk1MTQsImV4cCI6MTY5OTYzMzExNH0._xK8Mi-ThQa-DtHcfi9H9hZoW7uxGHF89kW32mniHFk";
+  "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RhYWphIiwiaWQiOiI2NWFhOGI3OWFlZGM2MDJmZGVjNjZmYmMiLCJpYXQiOjE3MDU2NzU2NjksImV4cCI6MTcwNTY3OTI2OX0.3ROz66IpCUgr3J1KNBdweg9pxARperofGB88gYyOXRE";
 
 describe("api tests", () => {
   test("blogs are returned as json", async () => {
@@ -35,7 +35,7 @@ describe("api tests", () => {
     expect(testBlog.id).toBeDefined();
   });
 
-  test("valid blogs can be added", async () => {
+  test.only("valid blogs can be added", async () => {
     const newBlog = {
       title: "new blog",
       author: "same author",

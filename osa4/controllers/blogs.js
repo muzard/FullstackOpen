@@ -79,4 +79,9 @@ blogsRouter.put("/:id", async (request, response) => {
   response.status(204).json(updatedNote);
 });
 
+blogsRouter.get("/all", async (request, response) => {
+  const blogs = await Blog.find({}).populate("user", { username: 1 });
+  response.json(blogs);
+});
+
 module.exports = blogsRouter;
