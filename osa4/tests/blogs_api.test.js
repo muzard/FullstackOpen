@@ -169,7 +169,7 @@ describe("updating a blog", () => {
     expect(titles).not.toContainEqual(oldBlog.title);
   });
 
-  test("works with partial blog", async () => {
+  test.only("works with partial blog", async () => {
     const blog = {
       likes: 123,
     };
