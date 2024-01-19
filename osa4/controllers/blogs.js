@@ -37,6 +37,10 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
+  console.log("------");
+  console.log(request.user);
+  console.log("------");
+
   const blog = await Blog.findById(request.params.id);
   const decodedToken = jwt.verify(request.token, process.env.SECRET);
 
@@ -78,11 +82,6 @@ blogsRouter.put("/:id", async (request, response) => {
   });
 
   response.status(204).json(updatedBlog);
-});
-
-blogsRouter.get("/all", async (request, response) => {
-  const blogs = await Blog.find({}).populate("user", { username: 1 });
-  response.json(blogs);
 });
 
 module.exports = blogsRouter;

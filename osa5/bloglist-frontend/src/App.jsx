@@ -106,6 +106,17 @@ const App = () => {
     await blogService.like(likedBlog.likes, likedBlog.id);
   };
 
+  const removeBlog = async (removedBlog) => {
+    const removeBlogIndex = blogs.findIndex(
+      (blog) => blog.id == removedBlog.id
+    );
+    const updatedBlogs = blogs;
+    updatedBlogs.splice(removeBlogIndex);
+    setBlogs(updatedBlogs);
+
+    await blogService.remove(removedBlog.id);
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault();
 
@@ -133,7 +144,14 @@ const App = () => {
         <div>
           <h2>blogs</h2>
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} ref={blogRef} like={likeBlog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              ref={blogRef}
+              like={likeBlog}
+              user={user}
+              remove={removeBlog}
+            />
           ))}
         </div>
 

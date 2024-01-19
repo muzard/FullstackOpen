@@ -40,4 +40,15 @@ const like = async (likes, id) => {
   return response.data;
 };
 
-export default { getAll, login, setToken, create, like };
+const remove = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.delete(
+    `http://localhost:3001/api/blogs/${id}`,
+    config
+  );
+  return response.data;
+};
+
+export default { getAll, login, setToken, create, like, remove };

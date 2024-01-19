@@ -4,6 +4,7 @@ const Blog = forwardRef((props, ref) => {
   const [visible, setVisible] = useState(false);
   const blog = props.blog;
   const [likes, setLikes] = useState(blog.likes);
+  const [show, setShow] = useState(true);
 
   const normalStyle = {
     paddingTop: 10,
@@ -16,8 +17,19 @@ const Blog = forwardRef((props, ref) => {
     display: "none",
   };
 
+  const showAll = { display: show ? "" : "none" };
+
   const hideWhenBig = visible ? hiddenStyle : normalStyle;
   const showWhenBig = visible ? normalStyle : hiddenStyle;
+  let showDelete;
+
+  if (blog.user.username === props.user.username) {
+    showDelete = {
+      display: "",
+    };
+  } else {
+    showDelete = hiddenStyle;
+  }
 
   const toggleSize = () => {
     setVisible(!visible);
@@ -34,8 +46,15 @@ const Blog = forwardRef((props, ref) => {
     setLikes(likes + 1);
   };
 
+  const remove = () => {
+    if (window.confirm(`Do you really want to remove ${blog.title}?`)) {
+      props.remove(blog);
+      setShow(false);
+    }
+  };
+
   return (
-    <div>
+    <div style={showAll}>
       <div style={hideWhenBig}>
         {blog.title} by {blog.author}
         <button onClick={toggleSize}>view</button>
@@ -51,6 +70,9 @@ const Blog = forwardRef((props, ref) => {
           {likes} <button onClick={like}>like</button>
         </div>
         <div>{blog.user.name}</div>
+        <button style={showDelete} onClick={remove}>
+          remove
+        </button>
       </div>
     </div>
   );
