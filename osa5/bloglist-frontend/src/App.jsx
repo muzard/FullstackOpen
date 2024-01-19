@@ -53,9 +53,18 @@ const App = () => {
     }, 5000);
   };
 
+  const compareBlogs = (a, b) => {
+    if (a.likes > b.likes) {
+      return -1;
+    } else if (a.likes < b.likes) {
+      return 1;
+    }
+    return 0;
+  };
+
   useEffect(() => {
     blogService.getAll().then((blogs) => {
-      setBlogs(blogs);
+      setBlogs(blogs.sort(compareBlogs));
     });
   }, []);
 
