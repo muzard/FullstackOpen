@@ -70,13 +70,14 @@ blogsRouter.put("/:id", async (request, response) => {
     author: body.author || oldBlog.author,
     url: body.url || oldBlog.url,
     likes: body.likes || oldBlog.likes,
+    user: oldBlog.user,
   };
 
-  const updatedNote = await Blog.findByIdAndUpdate(request.params.id, newBlog, {
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, newBlog, {
     new: true,
   });
 
-  response.status(204).json(updatedNote);
+  response.status(204).json(updatedBlog);
 });
 
 blogsRouter.get("/all", async (request, response) => {
