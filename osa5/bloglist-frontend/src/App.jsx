@@ -98,7 +98,9 @@ const App = () => {
   };
 
   const likeBlog = async (likedBlog) => {
-    const visibleBlogIndex = blogs.findIndex((blog) => blog.id == likedBlog.id);
+    const visibleBlogIndex = blogs.findIndex(
+      (blog) => blog.id === likedBlog.id
+    );
     const updatedBlogs = blogs;
     updatedBlogs[visibleBlogIndex].likes += 1;
     setBlogs(updatedBlogs);
@@ -108,7 +110,7 @@ const App = () => {
 
   const removeBlog = async (removedBlog) => {
     const removeBlogIndex = blogs.findIndex(
-      (blog) => blog.id == removedBlog.id
+      (blog) => blog.id === removedBlog.id
     );
     const updatedBlogs = blogs;
     updatedBlogs.splice(removeBlogIndex);

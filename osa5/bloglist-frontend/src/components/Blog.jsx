@@ -78,13 +78,6 @@ const Blog = forwardRef((props, ref) => {
   );
 });
 
-/*
-const Blog = ({ blog }) => {
-  return (
-    <div>
-      {blog.title} by {blog.author}
-    </div>
-  );
-};
-*/
+Blog.displayName = "BlogBlock";
+
 export default Blog;
