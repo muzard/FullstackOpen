@@ -8,6 +8,10 @@ const getByText = (text, isExact = true) => {
   return screen.getByText(text, { exact: isExact });
 };
 
+const isVisible = (text) => {
+  expect(getByText(text)).not.toHaveStyle("display: none");
+};
+
 describe("Blog component tests", () => {
   const testTitle = "test title";
   const testAuthor = "testAuthor";
@@ -49,9 +53,8 @@ describe("Blog component tests", () => {
     const button = getByText("view");
     await user.click(button);
 
-    expect(getByText(testURL)).not.toHaveStyle("display: none");
-    expect(getByText(testLikes)).not.toHaveStyle("display: none");
-    expect(getByText(testName)).not.toHaveStyle("display: none");
+    const content = [testURL, testLikes, testName];
+    content.forEach((property) => isVisible(property));
   });
 
   test("Like event handler gets called two times if like button is pressed two times", async () => {
