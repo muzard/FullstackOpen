@@ -55,12 +55,12 @@ const Blog = forwardRef((props, ref) => {
 
   return (
     <div style={showAll} className="blog">
-      <div style={hideWhenBig}>
+      <div style={hideWhenBig} className="visibleAtFirst">
         {blog.title} by {blog.author}
         <button onClick={toggleSize}>view</button>
       </div>
 
-      <div style={showWhenBig}>
+      <div style={showWhenBig} className="hiddenAtFirst">
         <div>
           {blog.title} by {blog.author}
           <button onClick={toggleSize}>hide</button>
