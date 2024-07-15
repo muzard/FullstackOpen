@@ -54,7 +54,7 @@ const Blog = forwardRef((props, ref) => {
   };
 
   return (
-    <div style={showAll}>
+    <div style={showAll} className="blog">
       <div style={hideWhenBig}>
         {blog.title} by {blog.author}
         <button onClick={toggleSize}>view</button>
