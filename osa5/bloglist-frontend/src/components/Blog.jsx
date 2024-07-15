@@ -46,6 +46,8 @@ const Blog = forwardRef((props, ref) => {
     setLikes(likes + 1);
   };
 
+  const likeHandler = props.mockHandler ? props.mockHandler : like;
+
   const remove = () => {
     if (window.confirm(`Do you really want to remove ${blog.title}?`)) {
       props.remove(blog);
@@ -67,7 +69,7 @@ const Blog = forwardRef((props, ref) => {
         </div>
         <div>{blog.url}</div>
         <div>
-          {likes} <button onClick={like}>like</button>
+          {likes} <button onClick={likeHandler}>like</button>
         </div>
         <div>{blog.user.name}</div>
         <button style={showDelete} onClick={remove}>

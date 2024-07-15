@@ -34,25 +34,40 @@ describe("Blog component tests", () => {
     password: "salainen",
   };
 
-  let container;
-
-  beforeEach(() => {
-    container = render(<Blog blog={testblog} user={testuser} />).container;
-  });
-
   test("Blog component renders the title", () => {
-    const element = screen.getAllByText(testTitle, {
+    render(<Blog blog={testblog} user={testuser} />);
+
+    screen.getAllByText(testTitle, {
       exact: false,
     });
   });
 
   test("Blog component renders url, likes and user when blog is in enlarged mode", async () => {
+    render(<Blog blog={testblog} user={testuser} />);
+
     const user = userEvent.setup();
-    const button = screen.getByText("view");
+    const button = getByText("view");
     await user.click(button);
 
     expect(getByText(testURL)).not.toHaveStyle("display: none");
     expect(getByText(testLikes)).not.toHaveStyle("display: none");
     expect(getByText(testName)).not.toHaveStyle("display: none");
+  });
+
+  test("Like event handler gets called two times if like button is pressed two times", async () => {
+    const mockHandler = jest.fn();
+    render(<Blog blog={testblog} user={testuser} mockHandler={mockHandler} />);
+
+    const user = userEvent.setup();
+    const viewButton = getByText("view");
+    await user.click(viewButton);
+
+    const likeButton = getByText("like");
+
+    const timesClicked = 2;
+    for (let i = 0; i < timesClicked; i++) {
+      await user.click(likeButton);
+    }
+    expect(mockHandler.mock.calls).toHaveLength(timesClicked);
   });
 });
