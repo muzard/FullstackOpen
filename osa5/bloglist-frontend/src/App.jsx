@@ -162,6 +162,7 @@ const App = () => {
         </Togglable>
 
         <br />
+        <button onClick={logOut}>log out</button>
       </div>
     );
   };
@@ -210,8 +211,6 @@ const App = () => {
 
       {!user && userNotLoggedInContent()}
       {user && userLoggedInContent()}
-
-      <button onClick={logOut}>log out</button>
     </div>
   );
 };
