@@ -50,7 +50,7 @@ describe("Blog app", () => {
     });
   });
 
-  describe("When logged in", async () => {
+  describe.only("When logged in", async () => {
     beforeEach(async ({ page }) => {
       await page.getByTestId("username").fill("testaaja");
       await page.getByTestId("password").fill("salainen");
@@ -73,10 +73,26 @@ describe("Blog app", () => {
       await createBlog(page);
 
       await page.getByRole("button", { name: "view" }).click();
-      page.pause();
       await page.getByRole("button", { name: "like" }).click();
 
       await expect(page.getByText("1 like")).toBeVisible();
+    });
+
+    test.only("blog can be removed", async ({ page }) => {
+      await createBlog(page);
+
+      await page.getByRole("button", { name: "view" }).click();
+      await page.pause();
+      await page.on("dialog", (dialog) => dialog.accept());
+      await page.getByRole("button", { name: "remove" }).click();
+
+      await expect(
+        page.getByText("test title by testblog authorview")
+      ).not.toBeVisible();
+
+      await expect(
+        page.getByText("test title by testblog authorhide")
+      ).not.toBeVisible();
     });
   });
 });
