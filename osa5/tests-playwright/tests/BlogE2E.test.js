@@ -1,7 +1,7 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
 const { before } = require("node:test");
 
-const createBlog = async () => {
+const createBlog = async (page) => {
   await page.getByRole("button", { name: "new blog" }).click();
   await page.getByTestId("title").fill("test title");
   await page.getByTestId("author").fill("testblog author");
@@ -50,7 +50,7 @@ describe("Blog app", () => {
     });
   });
 
-  describe.only("When logged in", async () => {
+  describe("When logged in", async () => {
     beforeEach(async ({ page }) => {
       await page.getByTestId("username").fill("testaaja");
       await page.getByTestId("password").fill("salainen");
@@ -59,7 +59,7 @@ describe("Blog app", () => {
     });
 
     test("a new blog can be created", async ({ page }) => {
-      await createBlog();
+      await createBlog(page);
 
       await expect(
         page.getByText("test title by testblog authorview")
@@ -69,11 +69,14 @@ describe("Blog app", () => {
       ).not.toBeVisible();
     });
 
-    test.only("blog can be liked", async ({ page }) => {
-      await createBlog();
+    test("blog can be liked", async ({ page }) => {
+      await createBlog(page);
 
       await page.getByRole("button", { name: "view" }).click();
+      page.pause();
       await page.getByRole("button", { name: "like" }).click();
+
+      await expect(page.getByText("1 like")).toBeVisible();
     });
   });
 });
