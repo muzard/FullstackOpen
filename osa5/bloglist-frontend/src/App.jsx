@@ -180,6 +180,7 @@ const App = () => {
               value={username}
               onChange={({ target }) => setUsername(target.value)}
               placeholder="username"
+              data-testid="username"
             />
           </div>
           <div>
@@ -190,6 +191,7 @@ const App = () => {
               value={password}
               onChange={({ target }) => setPassword(target.value)}
               placeholder="password"
+              data-testid="password"
             />
           </div>
           <button type="submit">login</button>
