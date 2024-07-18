@@ -1,11 +1,5 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
-const createBlog = require("./helpers/createBlog");
-
-const likeManyTimes = async (likeButton, n) => {
-  for (let i = 0; i < n; i++) {
-    await likeButton.click();
-  }
-};
+const { createBlog, likeManyTimes, login } = require("./helpers.js");
 
 describe("Blog app", () => {
   beforeEach(async ({ page, request }) => {
@@ -31,18 +25,13 @@ describe("Blog app", () => {
 
   describe("Login", () => {
     test("succeeds with correct credentials", async ({ page }) => {
-      await page.getByTestId("username").fill("testaaja");
-      await page.getByTestId("password").fill("salainen");
-
-      await page.getByRole("button", { name: "login" }).click();
+      await login(page);
 
       await expect(page.getByText("testaaja logged in")).toBeVisible();
     });
 
     test("fails with wrong credentials", async ({ page }) => {
-      await page.getByTestId("username").fill("wrong");
-      await page.getByTestId("password").fill("creds");
-      await page.getByRole("button", { name: "login" }).click();
+      await login(page, "wrong", "creds");
 
       await expect(page.getByText("login failed")).toBeVisible();
     });
@@ -50,10 +39,7 @@ describe("Blog app", () => {
 
   describe("When logged in", async () => {
     beforeEach(async ({ page }) => {
-      await page.getByTestId("username").fill("testaaja");
-      await page.getByTestId("password").fill("salainen");
-
-      await page.getByRole("button", { name: "login" }).click();
+      await login(page);
     });
 
     test("a new blog can be created", async ({ page }) => {
@@ -112,9 +98,8 @@ describe("Blog app", () => {
         },
       });
 
-      await page.getByTestId("username").fill("testaaja2");
-      await page.getByTestId("password").fill("salainen2");
-      await page.getByRole("button", { name: "login" }).click();
+      await login(page, "testaaja2", "salainen2");
+
       await page.getByRole("button", { name: "view" }).click();
       await page.pause();
       await expect(page.getByRole("button", { name: "remove" })).toBeHidden();
