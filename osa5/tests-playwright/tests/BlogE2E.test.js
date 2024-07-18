@@ -50,7 +50,7 @@ describe("Blog app", () => {
     });
   });
 
-  describe.only("When logged in", async () => {
+  describe("When logged in", async () => {
     beforeEach(async ({ page }) => {
       await page.getByTestId("username").fill("testaaja");
       await page.getByTestId("password").fill("salainen");
@@ -78,13 +78,14 @@ describe("Blog app", () => {
       await expect(page.getByText("1 like")).toBeVisible();
     });
 
-    test.only("blog can be removed", async ({ page }) => {
+    test("blog can be removed", async ({ page }) => {
       await createBlog(page);
 
       await page.getByRole("button", { name: "view" }).click();
-      await page.pause();
       await page.on("dialog", (dialog) => dialog.accept());
-      await page.getByRole("button", { name: "remove" }).click();
+      const removeButton = await page.getByRole("button", { name: "remove" });
+      expect(removeButton).toBeVisible();
+      await removeButton.click();
 
       await expect(
         page.getByText("test title by testblog authorview")
@@ -93,6 +94,32 @@ describe("Blog app", () => {
       await expect(
         page.getByText("test title by testblog authorhide")
       ).not.toBeVisible();
+    });
+
+    // test "blog can be removed" makes sure that it is visible to the creator
+    test("remove button is only visible to the creator of the blog", async ({
+      page,
+      request,
+    }) => {
+      await createBlog(page);
+
+      await page.getByRole("button", { name: "log out" }).click();
+
+      // create second test account
+      await request.post("http://localhost:3001/api/users", {
+        data: {
+          username: "testaaja2",
+          name: "testaaja2",
+          password: "salainen2",
+        },
+      });
+
+      await page.getByTestId("username").fill("testaaja2");
+      await page.getByTestId("password").fill("salainen2");
+      await page.getByRole("button", { name: "login" }).click();
+      await page.getByRole("button", { name: "view" }).click();
+      await page.pause();
+      await expect(page.getByRole("button", { name: "remove" })).toBeHidden();
     });
   });
 });
