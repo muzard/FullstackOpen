@@ -1,12 +1,22 @@
 const { test, expect, beforeEach, describe } = require("@playwright/test");
-const { before } = require("node:test");
 
-const createBlog = async (page) => {
+const createBlog = async (
+  page,
+  title = "test title",
+  author = "testblog author",
+  url = "www.nonexistenturl.fi"
+) => {
   await page.getByRole("button", { name: "new blog" }).click();
-  await page.getByTestId("title").fill("test title");
-  await page.getByTestId("author").fill("testblog author");
-  await page.getByTestId("url").fill("www.nonexistenturl.fi");
+  await page.getByTestId("title").fill(title);
+  await page.getByTestId("author").fill(author);
+  await page.getByTestId("url").fill(url);
   await page.getByRole("button", { name: "create" }).click();
+};
+
+const likeManyTimes = async (likeButton, n) => {
+  for (let i = 0; i < n; i++) {
+    await likeButton.click();
+  }
 };
 
 describe("Blog app", () => {
@@ -120,6 +130,65 @@ describe("Blog app", () => {
       await page.getByRole("button", { name: "view" }).click();
       await page.pause();
       await expect(page.getByRole("button", { name: "remove" })).toBeHidden();
+    });
+    test("blogs are sorted by the number of likes", async ({ page }) => {
+      await createBlog(page);
+      await page.getByRole("button", { name: "view" }).click();
+      let likeButton = await page.getByRole("button", { name: "like" });
+      let likes = 5;
+
+      await likeManyTimes(likeButton, likes);
+      await expect(page.getByText(`${likes} like`)).toBeVisible();
+
+      await createBlog(page, "most likes", "likeable", "www.likedin.com");
+      await page
+        .getByText("most likes by likeableview")
+        .getByRole("button", { name: "view" })
+        .click();
+
+      likeButton = await page
+        .getByText("most likes by likeablehidewww")
+        .getByRole("button", { name: "like" });
+      await likeManyTimes(likeButton, 15);
+      await expect(page.getByText("15 like")).toBeVisible();
+
+      await createBlog(page, "least liked", "unlikeable", "boringurl.fi");
+      await page
+        .getByText("least liked by unlikeableview")
+        .getByRole("button", { name: "view" })
+        .click();
+
+      likeButton = await page
+        .getByText(
+          "least liked by unlikeablehideboringurl.fi0 liketestaajaremove"
+        )
+        .getByRole("button", { name: "like" });
+      await likeManyTimes(likeButton, 1);
+      await expect(page.getByText("1 like")).toBeVisible();
+
+      await page.reload();
+
+      await page
+        .getByText("least liked by unlikeableview")
+        .getByRole("button", { name: "view" })
+        .click();
+      await page
+        .getByText("most likes by likeableview")
+        .getByRole("button", { name: "view" })
+        .click();
+      await page
+        .getByText("test title by testblog authorview")
+        .getByRole("button", { name: "view" })
+        .click();
+
+      await page.pause();
+
+      await expect(
+        page.locator(".hiddenAtFirst").first().getByText("15 like")
+      ).toBeVisible();
+      await expect(
+        page.locator(".hiddenAtFirst").last().getByText("1 like")
+      ).toBeVisible();
     });
   });
 });
